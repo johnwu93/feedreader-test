@@ -4,6 +4,26 @@
  * all of the tests that will be run against your application.
  */
 
+function assertFeedsHaveAttribute(attribute) {
+  allFeeds.forEach(function (feed) {
+    var value = feed[attribute];
+    expect(value).toBeDefined();
+    expect(value).toBeTruthy();
+  });
+}
+
+var bodySelector = $('body');
+
+var checkSideMenuVisibility = function (bodySelector) {
+  return $(bodySelector).hasClass('menu-hidden');
+};
+
+var menuIconLinkSelector = $('.menu-icon-link');
+
+var clickMenuIconLink = function () {
+  $(menuIconLinkSelector).trigger('click');
+};
+
 /* We're placing all of our tests within the $() function,
  * since some of these tests may require DOM elements. We want
  * to ensure they don't run until the DOM is ready.
@@ -21,38 +41,45 @@ $(function () {
      * allFeeds in app.js to be an empty array and refresh the
      * page?
      */
+
     it('are defined', function () {
       expect(allFeeds).toBeDefined();
       expect(allFeeds.length).not.toBe(0);
     });
 
 
-    /* TODO: Write a test that loops through each feed
-     * in the allFeeds object and ensures it has a URL defined
-     * and that the URL is not empty.
-     */
+    it('should have a url for each feed', function () {
+      assertFeedsHaveAttribute('url');
+    });
 
-
-    /* TODO: Write a test that loops through each feed
-     * in the allFeeds object and ensures it has a name defined
-     * and that the name is not empty.
-     */
+    it('should have a name for each feed', function () {
+      assertFeedsHaveAttribute('name');
+    });
   });
 
 
   /* TODO: Write a new test suite named "The menu" */
+  describe('The menu', function () {
 
-  /* TODO: Write a test that ensures the menu element is
-   * hidden by default. You'll have to analyze the HTML and
-   * the CSS to determine how we're performing the
-   * hiding/showing of the menu element.
-   */
+    beforeEach(function () {
+      bodySelector.addClass('menu-hidden');
+    });
 
-  /* TODO: Write a test that ensures the menu changes
-   * visibility when the menu icon is clicked. This test
-   * should have two expectations: does the menu display when
-   * clicked and does it hide when clicked again.
-   */
+    it('should have the menu element hidden by default', function () {
+      // todo how do you start from a fresh webpage
+      var bodySelector = $('body');
+      expect(checkSideMenuVisibility(bodySelector)).toBeTruthy();
+    });
+
+    it('should have the menu changes visibility when the menu icon is clicked', function () {
+      var bodySelector = $('body');
+      clickMenuIconLink();
+      expect(checkSideMenuVisibility(bodySelector)).toBeFalsy();
+
+      clickMenuIconLink();
+      expect(checkSideMenuVisibility(bodySelector)).toBeTruthy();
+    });
+  });
 
   /* TODO: Write a new test suite named "Initial Entries" */
 
