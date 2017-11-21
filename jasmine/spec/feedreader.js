@@ -29,7 +29,7 @@ function checkEqualFeeds(thisFeedEntries, thatFeedEntries) {
     return false;
   }
   return [].every.call(thisFeedEntries, function (thisFeedEntry, index) {
-    return thisFeedEntry['href'] === thatFeedEntries[index]['href'];
+    return thisFeedEntry.href === thatFeedEntries[index].href;
   });
 }
 
