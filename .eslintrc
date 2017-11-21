@@ -1,0 +1,20 @@
+{
+  "extends": "udacity",
+  "rules": {
+    "no-extra-parens": "error",
+    "no-multi-str": "error",
+    "multiline-ternary": [
+      "error",
+      "never"
+    ],
+    "no-new-object": "error",
+    "no-new-wrappers": "error",
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "no-lonely-if": "error",
+    "no-undef": "off",
+    "no-warning-comments": "off"
+  }
+}
