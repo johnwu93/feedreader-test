@@ -14,16 +14,28 @@ function assertFeedsHaveAttribute(attribute) {
 
 var bodySelector = $('body');
 
-var checkSideMenuVisibility = function (bodySelector) {
+var checkSideMenuVisibility = function checkSideMenuVisibility() {
   return bodySelector.hasClass('menu-hidden');
 };
 
 var menuIconLinkSelector = $('.menu-icon-link');
 
-var clickMenuIconLink = function () {
+var clickMenuIconLink = function clickMenuIconLink() {
   menuIconLinkSelector.trigger('click');
 };
 
+function checkEqualFeeds(thisFeedEntries, thatFeedEntries) {
+  if (thisFeedEntries.length !== thatFeedEntries.length) {
+    return false;
+  }
+  return [].every.call(thisFeedEntries, function (thisFeedEntry, index) {
+    return thisFeedEntry['href'] === thatFeedEntries[index]['href'];
+  });
+}
+
+var extractFeedEntries = function () {
+  return $('.feed').children();
+};
 /* We're placing all of our tests within the $() function,
  * since some of these tests may require DOM elements. We want
  * to ensure they don't run until the DOM is ready.
@@ -67,34 +79,53 @@ $(function () {
 
     it('should have the menu element hidden by default', function () {
       // todo how do you start from a fresh webpage
-      expect(checkSideMenuVisibility(bodySelector)).toBeTruthy();
+      expect(checkSideMenuVisibility()).toBeTruthy();
     });
 
     it('should have the menu changes visibility when the menu icon is clicked', function () {
       clickMenuIconLink();
-      expect(checkSideMenuVisibility(bodySelector)).toBeFalsy();
+      const isFirstClickVisible = checkSideMenuVisibility();
 
       clickMenuIconLink();
-      expect(checkSideMenuVisibility(bodySelector)).toBeTruthy();
+      const isSecondClickVisible = checkSideMenuVisibility();
+
+      expect(isFirstClickVisible).toBeFalsy();
+      expect(isSecondClickVisible).toBeTruthy();
     });
   });
 
-  /* TODO: Write a new test suite named "Initial Entries" */
   describe('Initial Entries', function () {
+    /**
+     * Loads an arbitrary entry
+     */
     beforeEach(function callLoadFeed(done) {
       loadFeed(0, done);
     });
 
     it('should contain an entry element within the feed container', function (done) {
-      expect($('.feed').children.length).toBeGreaterThan(0);
+      expect(extractFeedEntries().length).toBeGreaterThan(0);
       done();
     });
   });
 
-  /* TODO: Write a new test suite named "New Feed Selection" */
+  describe('New Feed Selection', function () {
+    var originalFeedEntries;
 
-  /* TODO: Write a test that ensures when a new feed is loaded
-   * by the loadFeed function that the content actually changes.
-   * Remember, loadFeed() is asynchronous.
-   */
+    /**
+     * This setups one feed first and record it's contents, then you loads a second one
+     */
+    beforeEach(function callLoadFeed(done) {
+      loadFeed(0, function () {
+        originalFeedEntries = extractFeedEntries();
+        loadFeed(1, done);
+      });
+    });
+
+
+    it('should ensure that the content changes when a new feed is loaded', function (done) {
+      var newFeedEntries = extractFeedEntries();
+      expect(checkEqualFeeds(originalFeedEntries, newFeedEntries)).toBeFalsy();
+      done();
+    });
+  });
 }());
