@@ -15,13 +15,13 @@ function assertFeedsHaveAttribute(attribute) {
 var bodySelector = $('body');
 
 var checkSideMenuVisibility = function (bodySelector) {
-  return $(bodySelector).hasClass('menu-hidden');
+  return bodySelector.hasClass('menu-hidden');
 };
 
 var menuIconLinkSelector = $('.menu-icon-link');
 
 var clickMenuIconLink = function () {
-  $(menuIconLinkSelector).trigger('click');
+  menuIconLinkSelector.trigger('click');
 };
 
 /* We're placing all of our tests within the $() function,
@@ -67,12 +67,10 @@ $(function () {
 
     it('should have the menu element hidden by default', function () {
       // todo how do you start from a fresh webpage
-      var bodySelector = $('body');
       expect(checkSideMenuVisibility(bodySelector)).toBeTruthy();
     });
 
     it('should have the menu changes visibility when the menu icon is clicked', function () {
-      var bodySelector = $('body');
       clickMenuIconLink();
       expect(checkSideMenuVisibility(bodySelector)).toBeFalsy();
 
@@ -82,13 +80,16 @@ $(function () {
   });
 
   /* TODO: Write a new test suite named "Initial Entries" */
+  describe('Initial Entries', function () {
+    beforeEach(function callLoadFeed(done) {
+      loadFeed(0, done);
+    });
 
-  /* TODO: Write a test that ensures when the loadFeed
-   * function is called and completes its work, there is at least
-   * a single .entry element within the .feed container.
-   * Remember, loadFeed() is asynchronous so this test will require
-   * the use of Jasmine's beforeEach and asynchronous done() function.
-   */
+    it('should contain an entry element within the feed container', function (done) {
+      expect($('.feed').children.length).toBeGreaterThan(0);
+      done();
+    });
+  });
 
   /* TODO: Write a new test suite named "New Feed Selection" */
 
