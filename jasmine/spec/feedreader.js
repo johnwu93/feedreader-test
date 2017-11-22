@@ -34,7 +34,7 @@ function checkEqualFeeds(thisFeedEntries, thatFeedEntries) {
 }
 
 var extractFeedEntries = function () {
-  return $('.feed').children();
+  return $('.feed .entry-link');
 };
 /* We're placing all of our tests within the $() function,
  * since some of these tests may require DOM elements. We want
@@ -102,9 +102,8 @@ $(function () {
       loadFeed(0, done);
     });
 
-    it('should contain an entry element within the feed container', function (done) {
+    it('should contain an entry element within the feed container', function () {
       expect(extractFeedEntries().length).toBeGreaterThan(0);
-      done();
     });
   });
 
@@ -122,10 +121,9 @@ $(function () {
     });
 
 
-    it('should ensure that the content changes when a new feed is loaded', function (done) {
+    it('should ensure that the content changes when a new feed is loaded', function () {
       var newFeedEntries = extractFeedEntries();
       expect(checkEqualFeeds(originalFeedEntries, newFeedEntries)).toBeFalsy();
-      done();
     });
   });
 }());
