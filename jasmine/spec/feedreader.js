@@ -14,8 +14,6 @@ function assertFeedsHaveAttribute(attribute) {
 
 var bodySelector = $('body');
 
-var INITIAL_VISIBILITY = bodySelector.attr('class');
-
 var checkSideMenuVisibility = function checkSideMenuVisibility() {
   return bodySelector.hasClass('menu-hidden');
 };
@@ -31,12 +29,12 @@ function checkEqualFeeds(thisFeedEntries, thatFeedEntries) {
     return false;
   }
   return [].every.call(thisFeedEntries, function (thisFeedEntry, index) {
-    return thisFeedEntry.href === thatFeedEntries[index].href;
+    return $(thisFeedEntry).html() === $(thatFeedEntries[index]).html();
   });
 }
 
 var extractFeedEntries = function () {
-  return $('.feed .entry-link');
+  return $('.feed .entry');
 };
 /* We're placing all of our tests within the $() function,
  * since some of these tests may require DOM elements. We want
@@ -74,19 +72,6 @@ $(function () {
 
   describe('The menu', function () {
 
-    /**
-     * For this test suite, we would like the visibility of the menu to be constant throughout each
-     * test. In order to do this, we first retrieve the state of the menu, which was done initially.
-     * Using that initial state, we will ensure that each test will have that state using a nested
-     * test spec. More info about this can be found here:
-     * https://discussions.udacity.com/t/feed-reader-persistent-state/459522
-     */
-
-    beforeEach(function resetInitialVisibility() {
-      bodySelector.removeClass();
-      bodySelector.addClass(INITIAL_VISIBILITY);
-    });
-
     it('should have the menu element hidden by default', function () {
       expect(checkSideMenuVisibility()).toBeTruthy();
     });
@@ -103,48 +88,36 @@ $(function () {
     });
   });
 
-  describe('Entries', function () {
+  describe('Initial Entries', function () {
     /**
-     * This beforeEach statement will ensure the initial entry, which is set initially in the app.js
-     * will be the same for all the entries tests.
+     * Loads an arbitrary entry
      */
     beforeEach(function callLoadFeed(done) {
-      const INITIAL_FEED_ENTRY_ID = 0;
-      loadFeed(INITIAL_FEED_ENTRY_ID, done);
+      loadFeed(0, done);
     });
+
+    it('should contain an entry element within the feed container', function () {
+      expect(extractFeedEntries().length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('New Feed Selection', function () {
+    var originalFeedEntries;
 
     /**
-     * This is a comprehensive test that all the feed entries will be nonempty
+     * This setups one feed first and record it's contents, then you loads a second one
      */
-    describe('Initial Entries', function () {
-      for (var i = 0; i < allFeeds.length; i++) {
-        const feedId = i;
-        describe('go through feed ' + feedId, function (done) {
-          beforeEach(function callLoadFeed(done) {
-            loadFeed(feedId, done);
-          });
-          it('should contain an entry element within the feed container', function () {
-            expect(extractFeedEntries().length).toBeGreaterThan(0);
-          });
-        });
-      }
-    });
-
-    describe('New Feed Selection', function () {
-      var originalFeedEntries;
-
-      /**
-       * This records the contents of the initial feed, then loads a second one
-       */
-      beforeEach(function callLoadFeed(done) {
+    beforeEach(function callLoadFeed(done) {
+      loadFeed(0, function () {
         originalFeedEntries = extractFeedEntries();
         loadFeed(1, done);
       });
+    });
 
-      it('should ensure that the content changes when a new feed is loaded', function () {
-        var newFeedEntries = extractFeedEntries();
-        expect(checkEqualFeeds(originalFeedEntries, newFeedEntries)).toBeFalsy();
-      });
+
+    it('should ensure that the content changes when a new feed is loaded', function () {
+      var newFeedEntries = extractFeedEntries();
+      expect(checkEqualFeeds(originalFeedEntries, newFeedEntries)).toBeFalsy();
     });
   });
 }());
