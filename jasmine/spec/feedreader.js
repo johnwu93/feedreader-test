@@ -78,8 +78,7 @@ $(function () {
      * For this test suite, we would like the visibility of the menu to be constant throughout each
      * test. In order to do this, we first retrieve the state of the menu, which was done initially.
      * Using that initial state, we will ensure that each test will have that state using a nested
-     * test spec. This will ensure that all the test are independent. More info about this can be
-     * found here:
+     * test spec. More info about this can be found here:
      * https://discussions.udacity.com/t/feed-reader-persistent-state/459522
      */
 
@@ -106,12 +105,12 @@ $(function () {
 
   describe('Entries', function () {
     /**
-     * This beforeEach statement will ensure the initial entry, will be the same for all the entries
-     * tests. This is necessary for all tests to be independent
+     * This beforeEach statement will ensure the initial entry, which is set initially in the app.js
+     * will be the same for all the entries tests.
      */
     beforeEach(function callLoadFeed(done) {
-      const initialFeedEntry = 0;
-      loadFeed(initialFeedEntry, done);
+      const INITIAL_FEED_ENTRY_ID = 0;
+      loadFeed(INITIAL_FEED_ENTRY_ID, done);
     });
 
     /**
@@ -120,7 +119,7 @@ $(function () {
     describe('Initial Entries', function () {
       for (var i = 0; i < allFeeds.length; i++) {
         const feedId = i;
-        describe('go through feed ' + feedId, function () {
+        describe('go through feed ' + feedId, function (done) {
           beforeEach(function callLoadFeed(done) {
             loadFeed(feedId, done);
           });
